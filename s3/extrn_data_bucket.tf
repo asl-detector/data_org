@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "extrn_training_data_bucket" {
-  bucket = "${var.project_name}-extrn-raw-training-${var.uuid}"
+  bucket        = "${var.project_name}-extrn-raw-training-${var.uuid}"
   force_destroy = false
 }
 

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "captured_training_data_bucket" {
-  bucket = "${var.project_name}-captured-raw-training-${var.uuid}"
+  bucket        = "${var.project_name}-captured-raw-training-${var.uuid}"
   force_destroy = false
 }
 

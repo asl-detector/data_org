@@ -8,7 +8,7 @@ output "extrn_data_bucket_id" {
 
 output "captured_data_bucket_arn" {
   value = aws_s3_bucket.captured_training_data_bucket.arn
-  
+
 }
 
 output "captured_data_bucket_id" {
