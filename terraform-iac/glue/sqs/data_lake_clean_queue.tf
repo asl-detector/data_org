@@ -26,27 +26,11 @@ resource "aws_sqs_queue_policy" "clean_crawler_queue_policy" {
           }
         }
       },
-    #   {
-    #     Effect = "Allow",
-    #     Principal = {
-    #       AWS = var.glue_crawler_role_arn
-    #     },
-    #     Action = [
-    #       "sqs:ReceiveMessage",
-    #       "sqs:DeleteMessage",
-    #       "sqs:GetQueueUrl",
-    #       "sqs:GetQueueAttributes",
-    #       "sqs:ListDeadLetterSourceQueues",
-    #       "sqs:PurgeQueue",
-    #       "sqs:SetQueueAttributes"
-    #     ],
-    #     Resource = aws_sqs_queue.clean_crawler_event_queue.arn
-    #   }
     ]
   })
 }
 
-# Configure S3 bucket notification to send events to SQS
+# Resource: Configure S3 bucket notification to send events to SQS
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.data_lake_clean_bucket_id
 

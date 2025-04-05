@@ -4,7 +4,7 @@ variable "project_name" {
 }
 
 variable "uuid" {
-  description = "A unique identifier that will be appended to bucket names."
+  description = "A unique identifier that will be appended to various names."
   type        = string
   default     = "asl-dataset-00"
 }

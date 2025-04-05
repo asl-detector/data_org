@@ -33,6 +33,6 @@ module "sqs" {
     data_lake_processed_bucket_arn = var.data_lake_processed_bucket_arn
     data_lake_processed_bucket_id  = var.data_lake_processed_bucket_id
     clean_glue_crawler_role_arn = module.datalake_crawlers.clean_glue_crawler_role_arn
-
+    processed_glue_crawler_role_arn = module.datalake_crawlers.processed_glue_crawler_role_arn
 }
 
