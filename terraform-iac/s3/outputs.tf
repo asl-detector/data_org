@@ -15,12 +15,20 @@ output "captured_data_bucket_id" {
   value = aws_s3_bucket.captured_training_data_bucket.id
 }
 
+output "data_lake_clean_bucket_name" {
+  value = aws_s3_bucket.data_lake_cleaned.bucket
+}
+
 output "data_lake_clean_bucket_arn" {
   value = aws_s3_bucket.data_lake_cleaned.arn
 }
 
 output "data_lake_clean_bucket_id" {
   value = aws_s3_bucket.data_lake_cleaned.id
+}
+
+output "data_lake_processed_bucket_name" {
+  value = aws_s3_bucket.data_lake_processed_bucket.bucket
 }
 
 output "data_lake_processed_bucket_arn" {
