@@ -1,0 +1,62 @@
+version: 0.1
+
+# Resource usage estimates for ASL Dataset infrastructure
+resource_usage:
+  # S3 buckets
+  module.s3.aws_s3_bucket.extrn_training_data_bucket:
+    standard:
+      storage_gb: 350                # Reduced to account for glacier transition
+      monthly_tier_1_requests: 50000 # GET, SELECT, etc requests
+      monthly_tier_2_requests: 20000 # PUT, COPY, POST, LIST requests
+    glacier_flexible_retrieval:
+      storage_gb: 150                # Estimate for data transitioned via lifecycle policy
+      monthly_tier_1_requests: 1000  # Occasional access to archived data
+      monthly_tier_2_requests: 200   # Limited operations on archived data
+
+  module.s3.aws_s3_bucket.captured_training_data_bucket:
+    standard:
+      storage_gb: 140                # Reduced to account for glacier transition
+      monthly_tier_1_requests: 30000 # GET, SELECT, etc requests
+      monthly_tier_2_requests: 15000 # PUT, COPY, POST, LIST requests
+    glacier_flexible_retrieval:
+      storage_gb: 60                 # Estimate for data transitioned via lifecycle policy
+      monthly_tier_1_requests: 800   # Occasional access to archived data
+      monthly_tier_2_requests: 150   # Limited operations on archived data
+
+  module.s3.aws_s3_bucket.data_lake_cleaned:
+    standard:
+      storage_gb: 210                # 300GB of cleaned data, reduced for glacier portion
+      monthly_tier_1_requests: 40000 # GET, SELECT, etc requests
+      monthly_tier_2_requests: 10000 # PUT, COPY, POST, LIST requests
+    glacier_flexible_retrieval:
+      storage_gb: 90                 # ~30% of data in glacier based on lifecycle policy
+      monthly_tier_1_requests: 2000  # Less frequent access to archived data
+      monthly_tier_2_requests: 500   # Fewer operations on archived data
+
+  module.s3.aws_s3_bucket.data_lake_processed_bucket:
+    standard:
+      storage_gb: 175                # 250GB of processed data, reduced for glacier portion
+      monthly_tier_1_requests: 60000 # GET, SELECT, etc requests
+      monthly_tier_2_requests: 5000  # PUT, COPY, POST, LIST requests
+    glacier_flexible_retrieval:
+      storage_gb: 75                 # ~30% of data in glacier based on lifecycle policy
+      monthly_tier_1_requests: 3000  # More frequent access to processed archived data
+      monthly_tier_2_requests: 400   # Operations on archived data
+
+  # SQS queues
+  module.glue.module.sqs.aws_sqs_queue.clean_crawler_event_queue:
+    monthly_requests: 500000       # Estimated events for clean data updates
+
+  module.glue.module.sqs.aws_sqs_queue.processed_crawler_event_queue:
+    monthly_requests: 300000       # Estimated events for processed data updates
+
+  # Glue resources
+  module.glue.module.datalake_crawlers.aws_glue_crawler.clean_data_lake_crawler:
+    monthly_hours: 3  # 3 hours of crawler runtime per month
+
+  module.glue.module.datalake_crawlers.aws_glue_crawler.processed_data_lake_crawler:
+    monthly_hours: 2  # 2 hours of crawler runtime per month
+
+  # By default, Glue database has no cost unless we're storing a large number of metadata objects
+  module.glue.module.database.aws_glue_catalog_database.glue_database:
+    monthly_objects: 5000  # Estimated number of metadata objects
