@@ -56,3 +56,75 @@ resource "aws_s3_bucket_public_access_block" "data_lake_cleaned_access" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+# Add bucket policy for cross-account access
+resource "aws_s3_bucket_policy" "data_lake_clean_cross_account" {
+  bucket = aws_s3_bucket.data_lake_cleaned.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            "arn:aws:iam::${var.account_ids.operations}:root",
+            "arn:aws:iam::${var.account_ids.development}:root"
+          ]
+        }
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.data_lake_cleaned.arn,
+          "${aws_s3_bucket.data_lake_cleaned.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Create IAM role for cross-account access to clean data lake
+resource "aws_iam_role" "data_lake_clean_access_role" {
+  name = "${var.project_name}-data-lake-clean-access"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            "arn:aws:iam::${var.account_ids.operations}:root",
+            "arn:aws:iam::${var.account_ids.development}:root"
+          ]
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# Add policy to the role allowing access to the clean data lake
+resource "aws_iam_role_policy" "data_lake_clean_access_policy" {
+  name = "s3-data-lake-clean-access"
+  role = aws_iam_role.data_lake_clean_access_role.id
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.data_lake_cleaned.arn,
+          "${aws_s3_bucket.data_lake_cleaned.arn}/*"
+        ]
+      }
+    ]
+  })
+}

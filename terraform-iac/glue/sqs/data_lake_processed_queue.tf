@@ -24,23 +24,7 @@ resource "aws_sqs_queue_policy" "processed_crawler_queue_policy" {
             "aws:SourceArn" = var.data_lake_processed_bucket_arn
           }
         }
-      },
-    #   {
-    #     Effect = "Allow",
-    #     Principal = {
-    #       AWS = var.glue_crawler_role_arn
-    #     },
-    #     Action = [
-    #       "sqs:ReceiveMessage",
-    #       "sqs:DeleteMessage",
-    #       "sqs:GetQueueUrl",
-    #       "sqs:GetQueueAttributes",
-    #       "sqs:ListDeadLetterSourceQueues",
-    #       "sqs:PurgeQueue",
-    #       "sqs:SetQueueAttributes"
-    #     ],
-    #     Resource = aws_sqs_queue.processed_crawler_event_queue.arn
-    #   }
+      }
     ]
   })
 }
@@ -66,5 +50,4 @@ resource "aws_s3_bucket_notification" "processed_bucket_notification" {
     events        = ["s3:ObjectCreated:*"]
     filter_suffix = ".parquet"
   }
-
 }
